@@ -1,0 +1,16 @@
+{
+    "name": "nekofar/slim-rest-crud",
+    "description": "Implementing simple REST api using Slim framework",
+    "minimum-stability": "dev",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Milad Nekofar",
+            "email": "milad@nekofar.com"
+        }
+    ],
+    "require": {
+        "slim/slim": "~2.4.0",
+        "j4mie/idiorm": "~1.5.0"
+    }
+}
