@@ -6,12 +6,20 @@ use Slim\Http\Request as Request;
 use Slim\Http\Response as Response;
 
 // Prepare database connection
-ORM::configure(
-    array(
-        'connection_string' => sprintf('mysql:dbname=%s;host=%s', DB_NAME, DB_HOST),
-        'username' => DB_USER,
-        'password' => DB_PASS
-    )
+ORM::configure('sqlite:' . dirname( __FILE__ ) . '/database.sqlite');
+ORM::configure('return_result_sets', true);
+ORM::configure('logging',true);
+
+// Creates the table if it doesn't already exist.
+$db = ORM::get_db();
+$db->exec( "
+        CREATE TABLE IF NOT EXISTS note (
+            id INTEGER PRIMARY KEY, 
+            title TEXT, 
+            content TEXT,
+            created TEXT
+        );"
+
 );
 
 // Create app using Slim
@@ -29,10 +37,11 @@ $app->post('/notes/', function ( Request $request, Response $response, $args = [
 
     // Create new note based on json object data
     $note = ORM::for_table('note')->create();
-    $note->set('title', $object->title);
+	$note->set('title', $object->title);
     $note->set('text', $object->text);
+    $note->set('created_at', time());
 
-    if ($note->save() == false) {
+	if ($note->save() == false) {
         // Set status code on header as bad request
 		return $response->withStatus(400);
     }
@@ -136,7 +145,7 @@ $app->get('/notes/', function ( Request $request, Response $response, $args = []
         $object->id = $note->get('id');
         $object->title = $note->get('title');
         $object->text = $note->get('text');
-        $object->created_at = $note->get('created_at');
+        $object->created_at = date(DateTime::ISO8601, $note->get('created_at'));
 
         array_push($objects, $object);
     }
