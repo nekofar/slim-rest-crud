@@ -53,7 +53,7 @@ $app->post('/notes/', function ( Request $request, Response $response, $args = [
 })->setName('notes/create');
 
 // Add read action
-$app->get('/notes/:id', function ( Request $request, Response $response, $args = []) {
+$app->get('/notes/{id}', function ( Request $request, Response $response, $args = []) {
 
     // Get note data from table using id
     $note = ORM::for_table('note')->find_one($args['id']);
@@ -76,7 +76,7 @@ $app->get('/notes/:id', function ( Request $request, Response $response, $args =
 })->setName('notes/read');
 
 // Add update action
-$app->put('/notes/:id', function ( Request $request, Response $response, $args = []) {
+$app->put('/notes/{id}', function ( Request $request, Response $response, $args = []) {
 
     // Retrieve note data from table using id
     $note = ORM::for_table('note')->find_one($args['id']);
@@ -104,7 +104,7 @@ $app->put('/notes/:id', function ( Request $request, Response $response, $args =
 })->setName('notes/update');
 
 // Add delete action
-$app->delete('/note/:id', function ( Request $request, Response $response, $args = []) {
+$app->delete('/note/{id}', function ( Request $request, Response $response, $args = []) {
 
     // Find note data from table using id
     $note = ORM::for_table('note')->find_one($args['id']);
