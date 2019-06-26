@@ -33,13 +33,13 @@ $app = new App( [
 $app->post('/notes/', function ( Request $request, Response $response, $args = []) {
 
     // Get json object data from request body
-    $object = json_decode($request->getBody());
+    $object = (object) $request->getParsedBody();
 
     // Create new note based on json object data
     $note = ORM::for_table('note')->create();
 	$note->set('title', $object->title);
-    $note->set('text', $object->text);
-    $note->set('created_at', time());
+    $note->set('content', $object->content);
+    $note->set('created', date(DateTime::ISO8601));
 
 	if ($note->save() == false) {
         // Set status code on header as bad request
@@ -67,8 +67,8 @@ $app->get('/notes/{id}', function ( Request $request, Response $response, $args 
     $object = new stdClass();
     $object->id = $note->get('id');
     $object->title = $note->get('title');
-    $object->text = $note->get('text');
-    $object->created_at = $note->get('created_at');
+    $object->content = $note->get('content');
+    $object->created = $note->get('created');
 
     // Put note data to the response content as json
     return $response->withJson($object);
@@ -87,11 +87,11 @@ $app->put('/notes/{id}', function ( Request $request, Response $response, $args 
     }
 
     // Get json object data from request body
-    $object = json_decode($request->getBody());
+	$object = (object) $request->getParsedBody();
 
     // Update note based on json object data
     $note->set('title', $object->title);
-    $note->set('text', $object->text);
+    $note->set('content', $object->content);
 
     if ($note->save() == false) {
         // Set status code on header as bad request
@@ -144,8 +144,8 @@ $app->get('/notes/', function ( Request $request, Response $response, $args = []
         $object = new stdClass();
         $object->id = $note->get('id');
         $object->title = $note->get('title');
-        $object->text = $note->get('text');
-        $object->created_at = date(DateTime::ISO8601, $note->get('created_at'));
+        $object->content = $note->get('content');
+        $object->created = $note->get('created');
 
         array_push($objects, $object);
     }
