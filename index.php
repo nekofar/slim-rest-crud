@@ -1,11 +1,9 @@
 <?php
 require 'vendor/autoload.php';
 
-// Define database information
-define('DB_HOST', 'localhost');
-define('DB_USER', 'root');
-define('DB_PASS', '123456');
-define('DB_NAME', 'self_slimrestcrud');
+use Slim\App as App;
+use Slim\Http\Request as Request;
+use Slim\Http\Response as Response;
 
 // Prepare database connection
 ORM::configure(
@@ -17,18 +15,17 @@ ORM::configure(
 );
 
 // Create app using Slim
-$app = new \Slim\Slim(
-    array(
-        'debug' => true,
-        'mode' => 'development',
-    )
-);
+$app = new App( [
+	'settings' => [
+		'displayErrorDetails' => true
+	]
+] );
 
 // Add create action
-$app->post('/notes/', function () use ($app) {
+$app->post('/notes/', function ( Request $request, Response $response, $args = []) {
 
     // Get json object data from request body
-    $object = json_decode($app->request->getBody());
+    $object = json_decode($request->getBody());
 
     // Create new note based on json object data
     $note = ORM::for_table('note')->create();
@@ -37,26 +34,24 @@ $app->post('/notes/', function () use ($app) {
 
     if ($note->save() == false) {
         // Set status code on header as bad request
-        $app->response->setStatus(400);
-        return;
+		return $response->withStatus(400);
     }
 
     // Set status code on header as created
-    $app->response->setStatus(201);
-    $app->response->headers->set('Location', $app->urlFor('notes/read', ['id' => $note->id()]));
+    return $response->withStatus(201)
+             ->withHeader('Location', $this->router->pathFor('notes/read', ['id' => $note->id()]));
 
-})->name('notes/create');
+})->setName('notes/create');
 
 // Add read action
-$app->get('/notes/:id', function ($id) use ($app) {
+$app->get('/notes/:id', function ( Request $request, Response $response, $args = []) {
 
     // Get note data from table using id
-    $note = ORM::for_table('note')->find_one($id);
+    $note = ORM::for_table('note')->find_one($args['id']);
 
     if ($note == false) {
         // Set status code on header as not found
-        $app->response->setStatus(404);
-        return;
+	    return $response->withStatus(404);
     }
 
     // Put note data to the empty object
@@ -67,26 +62,23 @@ $app->get('/notes/:id', function ($id) use ($app) {
     $object->created_at = $note->get('created_at');
 
     // Put note data to the response content as json
-    $app->response->setStatus(200);
-    $app->response->setBody(json_encode($object));
-    $app->response->headers->set('Content-Type', 'application/json');
+    return $response->withJson($object);
 
-})->name('notes/read');
+})->setName('notes/read');
 
 // Add update action
-$app->put('/notes/:id', function ($id) use ($app) {
+$app->put('/notes/:id', function ( Request $request, Response $response, $args = []) {
 
     // Retrieve note data from table using id
-    $note = ORM::for_table('note')->find_one($id);
+    $note = ORM::for_table('note')->find_one($args['id']);
 
     if ($note == false) {
         // Set status code on header as not found
-        $app->response->setStatus(404);
-        return;
+	    return $response->withStatus(404);
     }
 
     // Get json object data from request body
-    $object = json_decode($app->request->getBody());
+    $object = json_decode($request->getBody());
 
     // Update note based on json object data
     $note->set('title', $object->title);
@@ -94,45 +86,42 @@ $app->put('/notes/:id', function ($id) use ($app) {
 
     if ($note->save() == false) {
         // Set status code on header as bad request
-        $app->response->setStatus(400);
-        return;
+	    return $response->withStatus(400);
     }
 
     // Set status code on header as not content
-    $app->response->setStatus(204);
+	return $response->withStatus(204);
 
-})->name('notes/update');
+})->setName('notes/update');
 
 // Add delete action
-$app->delete('/note/:id', function ($id) use ($app) {
+$app->delete('/note/:id', function ( Request $request, Response $response, $args = []) {
 
     // Find note data from table using id
-    $note = ORM::for_table('note')->find_one($id);
+    $note = ORM::for_table('note')->find_one($args['id']);
 
     if ($note == false) {
         // Set status code on header as not found
-        $app->response->setStatus(404);
-        return;
+        return $response->withStatus(404);
     }
 
     // Try to delete note from database
     if ($note->delete() == false) {
         // Set status code on header as internal server error
-        $app->response->setStatus(500);
-        return;
+        return $response->withStatus(500);
     }
 
     // Set status code on header as not content
-    $app->response->setStatus(200);
+    return $response->withStatus(200);
 
-})->name('notes/delete');
+})->setName('notes/delete');
 
 // Add index action
-$app->get('/notes/', function () use ($app) {
+$app->get('/notes/', function ( Request $request, Response $response, $args = []) {
 
     // Get parameters from request
-    $start = $app->request->get('start', 0);
-    $limit = $app->request->get('limit', 10);
+    $start = $request->getParam('start', 0);
+    $limit = $request->getParam('limit', 10);
 
     // Retrieve notes using offset and limit from database
     $notes = ORM::for_table('note')
@@ -153,9 +142,7 @@ $app->get('/notes/', function () use ($app) {
     }
 
     // Put notes data to the response content as json
-    $app->response->setStatus(200);
-    $app->response->setBody(json_encode($objects));
-    $app->response->headers->set('Content-Type', 'application/json');
+	return $response->withJson( $objects );
 
 });
 
