@@ -1,16 +1,26 @@
 {
-    "name": "nekofar/slim-rest-crud",
-    "description": "Implementing simple REST api using Slim framework",
-    "minimum-stability": "dev",
-    "license": "MIT",
-    "authors": [
-        {
-            "name": "Milad Nekofar",
-            "email": "milad@nekofar.com"
-        }
-    ],
-    "require": {
-        "slim/slim": "~2.4.0",
-        "j4mie/idiorm": "~1.5.0"
+  "name": "nekofar/slim-rest-crud",
+  "description": "Implementing simple REST api using Slim framework",
+  "minimum-stability": "dev",
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Milad Nekofar",
+      "email": "milad@nekofar.com"
     }
+  ],
+  "require": {
+    "slim/slim": "^3.12.1",
+    "j4mie/idiorm": "^1.5.0",
+    "ext-json": "*",
+    "ext-pdo_sqlite": "*"
+  },
+  "require-dev": {
+    "phpunit/phpunit": "^8",
+    "guzzlehttp/guzzle": "^6.3@dev"
+  },
+  "scripts": {
+    "start": "php -S localhost:8000 index.php",
+    "test": "./vendor/bin/phpunit"
+  }
 }
