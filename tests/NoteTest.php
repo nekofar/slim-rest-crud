@@ -64,7 +64,7 @@ class NoteTest extends TestCase {
 	public function testUpdateNote() {
 
 		/** @var Response $response */
-		$response = $this->client->put('/notes/2', [
+		$response = $this->client->put('/notes/1', [
 			RequestOptions::JSON => [
 				'title' => 'Note title',
 				'content' => 'Note content',

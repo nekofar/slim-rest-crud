@@ -104,7 +104,7 @@ $app->put( '/notes/{id}', function ( Request $request, Response $response, $args
 } )->setName( 'notes/update' );
 
 // Add delete action
-$app->delete( '/note/{id}', function ( Request $request, Response $response, $args = [] ) {
+$app->delete( '/notes/{id}', function ( Request $request, Response $response, $args = [] ) {
 
 	// Find note data from table using id
 	$note = ORM::for_table( 'note' )->find_one( $args['id'] );
