@@ -1,6 +1,7 @@
 # Slim REST CRUD
 
-Sample of RESTful service implementation by Slim
+This is a simple example of the implementation of CRUD in RESTful API using the [Slim][1] framework.
+
 
 ## Usage
 
@@ -17,3 +18,5 @@ To execute the test suite, you'll need phpunit.
 ```bash
 composer run-script test
 ```
+
+[1]: https://github.com/slimphp/Slim
