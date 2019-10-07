@@ -10,7 +10,7 @@
     }
   ],
   "require": {
-    "slim/slim": "^3.12.1",
+    "slim/slim": "^4.3.0",
     "j4mie/idiorm": "^1.5.0",
     "ext-json": "*",
     "ext-pdo_sqlite": "*"
