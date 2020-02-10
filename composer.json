@@ -16,7 +16,7 @@
     "ext-pdo_sqlite": "*"
   },
   "require-dev": {
-    "phpunit/phpunit": "^8",
+    "phpunit/phpunit": "^9",
     "guzzlehttp/guzzle": "^6.3@dev"
   },
   "scripts": {
